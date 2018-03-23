@@ -31,7 +31,7 @@ How to use eval? Edit the code file, look for "admins" and replace the array of 
 | stopCmd | String | no | What should the stop command be. (UNFINISHED) | stop |
 | queueCmd | String | no | What should the queue command be. | queue |
 | npCmd | String | no | What should the Now Playing command be. | np |
-| downloadVid | Boolean | no | If you want to download the video. Make a folder called `audio_temp` so it would put it there. | false |
+| downloadVid | Boolean | no | If you want to download the video. Make sure the `audio_temp` folder is there. | false |
 
 Also, make sure the commands are done in lowercase, since the code already makes the commands go from uppercase to lowercase.<br>
 Basic configuration:
