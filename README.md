@@ -31,6 +31,8 @@ How to use eval? Edit the code file, look for "admins" and replace the array of 
 | stopCmd | String | no | What should the stop command be. (UNFINISHED) | stop |
 | queueCmd | String | no | What should the queue command be. | queue |
 | npCmd | String | no | What should the Now Playing command be. | np |
+| skipCmd | String | no | What should the skip command be. | skip |
+| resumeCmd | String | no | What should the resume command be. | resume|
 | downloadVid | Boolean | no | If you want to download the video. Make sure the `audio_temp` folder is there. | false |
 
 Also, make sure the commands are done in lowercase, since the code already makes the commands go from uppercase to lowercase.<br>
@@ -48,13 +50,15 @@ Advanced configuration:
 	"token": "token",
 	"ytapi3": "youtube-api-key",
 	"prefix": "!",
-  "helpCmd": "gitsomehelp",
-  "playCmd": "add",
-	"pauseCmd": "pass",
+  	"helpCmd": "gitsomehelp",
+  	"playCmd": "add",
+	"pauseCmd": "stopfornow",
 	"stopCmd": "stahp",
 	"queueCmd": "gimmedaqueue",
 	"npCmd": "whatsplaying",
-	"downloadVid": true
+	"downloadVid": true,
+	"resumeCmd": "continue",
+	"skipCmd": "switch"
 }
 ```
 
