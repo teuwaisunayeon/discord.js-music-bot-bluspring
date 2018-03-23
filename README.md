@@ -1,22 +1,22 @@
 # Music Test Bot
   A standalone Discord.JS music bot based on [DarkoPendragon](https://github.com/DarkoPendragon]'s [discord.js-musicbot-addon](https://github.com/DarkoPendragon/discord.js-musicbot-addon) module.
-  Some parts of this code is taken from his module (v1.5.1 and v1.10.3)
-	Developers: Naz // BluSpring, Damo // CodaEnder
-You are allowed to take any piece of code from here into your own music bot :)
-You are also allowed to fork this code and edit the code into a module.
-Another thing is you are allowed to not credit me (finally doing this for once)
-This is open-source code, anyway.
-I left some notes for help.
-
+ Some parts of this code is taken from his module (v1.5.1 and v1.10.3)<br>
+Developers: Naz // BluSpring, Damo // CodaEnder<br>
+You are allowed to take any piece of code from here into your own music bot :)<br>
+You are also allowed to fork this code and edit the code into a module.<br>
+Another thing is you are allowed to not credit me (finally doing this for once)<br>
+This is open-source code, anyway.<br>
+I left some notes for help.<br>
+<br><br>
 Please join my bot's Discord server here for assistance with the module: [FoozBallKing Bot Official](https://discord.gg/CYVBkej)
 
 # How to use
-First off, `cd` into the bot folder (after downloading it) and type `npm i`. This will install all the required modules.
-Rename the `d_config.json` file to `config.json`.
-Also, please install FFMPEG. Instructions [here](https://github.com/adaptlearning/adapt_authoring/wiki/Installing-FFmpeg).
-And also, install either node-opus or opusscript.
-`npm i -s node-opus` OR `npm i -s opusscript`
-How to use eval? Edit the code file, look for "admins" and replace the array of user IDs with yours and your trustable friends!
+First off, `cd` into the bot folder (after downloading it) and type `npm i`. This will install all the required modules.<br>
+Rename the `d_config.json` file to `config.json`.<br>
+Also, please install FFMPEG. Instructions [here](https://github.com/adaptlearning/adapt_authoring/wiki/Installing-FFmpeg).<br>
+And also, install either node-opus or opusscript.<br>
+`npm i -s node-opus` OR `npm i -s opusscript`<br>
+How to use eval? Edit the code file, look for "admins" and replace the array of user IDs with yours and your trustable friends!<br>
 
 # Configurations
 
@@ -33,7 +33,7 @@ How to use eval? Edit the code file, look for "admins" and replace the array of 
 | npCmd | String | no | What should the Now Playing command be. | np |
 | downloadVid | Boolean | no | If you want to download the video. Make a folder called `audio_temp` so it would put it there. | false |
 
-Also, make sure the commands are done in lowercase, since the code already makes the commands go from uppercase to lowercase.
+Also, make sure the commands are done in lowercase, since the code already makes the commands go from uppercase to lowercase.<br>
 Basic configuration:
 ```json
 {
