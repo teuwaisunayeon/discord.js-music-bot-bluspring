@@ -31,6 +31,8 @@ const pauseCmd = config.pauseCmd || 'pause';
 const stopCmd = config.stopCmd || 'stop';
 const queueCmd = config.queueCmd || 'queue';
 const npCmd = config.npCmd || 'np';
+const skipCmd = config.skipCmd || 'skip';
+const resumeCmd = config.resumeCmd || 'resume';
 const downloadVid = config.downloadVid || false;
 let queuesL = {}
 const admins = ["249467130108575745", "379274926621720576"] // Admin array, for eval.
@@ -95,6 +97,16 @@ if(typeof queueCmd !== 'string') {
 	process.exit(1)
 }
 
+if(typeof skipCmd !== 'string') {
+	console.error(new TypeError('Skip command must be a string!'))
+	process.exit(1)
+}
+
+if(typeof resumeCmd !== 'string') {
+	console.error(new TypeError('Resume command must be a string!'))
+	process.exit(1)
+}
+
 if(typeof downloadVid !== 'boolean') {
 	console.error(new TypeError('downloadVid configuration must be a boolean! (true/false)'))
 	process.exit(1)
@@ -117,6 +129,10 @@ client.on('message', async message => {
 	if(msg.toLowerCase().startsWith(prefix + 'leave')) return leave(message)
 	if(msg.toLowerCase().startsWith(prefix + queueCmd)) return queue(message)
 	if(msg.toLowerCase().startsWith(prefix + npCmd)) return np(message)
+	if(msg.toLowerCase().startsWith(prefix + skipCmd)) return skip(message, args)
+	if(msg.toLowerCase().startsWith(prefix + pauseCmd)) return pause(message)
+	if(msg.toLowerCase().startsWith(prefix + stopCmd)) return stop(message)
+	if(msg.toLowerCase().startsWith(prefix + resumeCmd)) return resume(message)
 		
 	if(msg.toLowerCase().startsWith(prefix + 'eval')) {
 		if(admins.some(ad => message.author.id.includes(ad))) {
@@ -137,6 +153,7 @@ client.on('message', async message => {
 	}
 	
 	if(msg.toLowerCase().startsWith(prefix + 'custom')) return customFunction(message, args) // Make a custom command here :)
+
 })
 	.on('ready', async () => {
 		const musicz = ['Best Friend', 'Demons', 'My Demons', 'Sad Song', 'YouTube Music'] // You can change this array :)
@@ -176,6 +193,8 @@ client.on('message', async message => {
 			.addField(stopCmd, 'Stops the queue (Clears queue)')
 			.addField(npCmd, 'Shows the current playing song!')
 			.addField(queueCmd, 'Shows the queue!')
+			.addField(skipCmd, 'Skips a song! You can select how many songs to skip!')
+			.addField(resumeCmd, 'Resumes the queue!')
 			message.channel.send(embed)
 		} else if(suffix == helpCmd) {
 			const embed = new Discord.RichEmbed()
@@ -199,7 +218,7 @@ client.on('message', async message => {
 			const embed = new Discord.RichEmbed()
 			.setColor([0, 255, 0])
 			.setThumbnail(client.user.avatarURL)
-			.addField(stopCmd, 'Stop your queue. Must be in VC. Must have a role which includes the name "DJ"')
+			.addField(stopCmd, 'Stop your queue. Must be in VC.')
 			message.channel.send(embed)
 		} else if(suffix == npCmd) {
 			const embed = new Discord.RichEmbed()
@@ -212,6 +231,18 @@ client.on('message', async message => {
 			.setColor([0, 255, 0])
 			.setThumbnail(client.user.avatarURL)
 			.addField(queueCmd, 'Check what\'s up in the queue!')
+			message.channel.send(embed)
+		} else if(suffix == skipCmd) {
+			const embed = new Discord.RichEmbed()
+			.setColor([0, 255, 0])
+			.setThumbnail(client.user.avatarURL)
+			.addField(skipCmd, `Skip songs! Usage: ${prefix}${skipCmd} <songs amount>`)
+			message.channel.send(embed)
+		} else if(suffix == resumeCmd) {
+			const embed = new Discord.RichEmbed()
+			.setColor([0, 255, 0])
+			.setThumbnail(client.user.avatarURL)
+			.addField(resumeCmd, 'Resume the queue!')
 			message.channel.send(embed)
 		} else {
 			const embed = new Discord.RichEmbed()
@@ -349,15 +380,13 @@ client.on('message', async message => {
 	
 	
 	function queue(message) { // Check the queue.
+		const voiceConnection = client.voiceConnections.find(meh => meh.channel.guild.id == message.guild.id);
+		if (voiceConnection == null) return message.channel.send('Not playing music!')
 		const queul = getQueueLink(message.guild.id)
-		if(!queul) {
-			message.channel.send('Not playing any music!')
-		} else {
 			const text = queul.map((video, index) => (
 				(index + 1) + ': ' + video.title
 			)).join('\n');
 			message.channel.send('Queue:\n' + text)
-		}
 	}
 	
 	function clean(text) { // For Eval
@@ -368,17 +397,15 @@ client.on('message', async message => {
 }
 
 function np(message) { // Now playing.
+	const voiceConnection = client.voiceConnections.find(meh => meh.channel.guild.id == message.guild.id);
+		if (voiceConnection == null) return message.channel.send('Not playing music!')
 	const queul = getQueueLink(message.guild.id)
-	if(queul.length < 0) {
-		message.channel.send('Not playing any music!')
-	} else {
 		const embed = new Discord.RichEmbed()
 		.setColor([255, 0, 0])
 		.setThumbnail(queul[0].thumbnail)
 		.addField(`Now playing:`, `[${queul[0].title}](${queul[0].url}) by [${queul[0].creator}](${queul[0].creator_url})`)
 		.setFooter(`Requested by ${queul[0].requester}!`)
 		message.channel.send(embed)
-	}
 }
 
 function customFunction(message, args) { // Custom command
@@ -386,5 +413,55 @@ function customFunction(message, args) { // Custom command
 }
 
 process.on('unhandledRejection', (reason, p) => { // Thanks to Damien // CodaEnder for this :P, catches an unhandled rejection error.
-  console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
+  console.log('Unhandled Rejection at: ', p, ', reason:', reason);
 });
+
+function skip(message, args) {
+	const voiceConnection = client.voiceConnections.find(meh => meh.channel.guild.id == message.guild.id);
+	if (voiceConnection == null) return message.channel.send('Not playing music!')
+	const queul = getQueueLink(message.guild.id)
+	let sum = 1
+	if(!isNaN(args) && parseInt(args.join(" ")) > 0) {
+		sum = parseInt(args.join(" "))
+	}
+	sum = Math.min(sum, queul.length)
+
+	queul.splice(0, sum - 1)
+
+	const dispatcher = voiceConnection.player.dispatcher;
+		if (voiceConnection.paused) dispatcher.resume();
+		dispatcher.end();
+	message.channel.send(`Skipped ${sum} songs!`)
+}
+
+function stop(message) {
+	const voiceConnection = client.voiceConnections.find(meh => meh.channel.guild.id == message.guild.id);
+	if (voiceConnection == null) return message.channel.send('Not playing music!')
+		const queul = getQueueLink(message.guild.id)
+	queul.splice(0, queul.length)
+		const dispatcher = voiceConnection.player.dispatcher;
+	if(voiceConnection.paused) dispatcher.resume()
+		dispatcher.end()
+}
+
+function pause(message) {
+	const voiceConnection = client.voiceConnections.find(meh => meh.channel.guild.id == message.guild.id);
+	if (voiceConnection == null) return message.channel.send('Not playing music!')
+		const dispatcher = voiceConnection.player.dispatcher;
+	if(voiceConnection.paused) {
+		message.channel.send('Already paused!')
+	} else {
+		dispatcher.pause()
+	}
+}
+
+function resume(message) {
+	const voiceConnection = client.voiceConnections.find(meh => meh.channel.guild.id == message.guild.id);
+	if (voiceConnection == null) return message.channel.send('Not playing music!')
+		if(!voiceConnection.paused) {
+			message.channel.send('Already playing!')
+		} else {
+			const dispatcher = voiceConnection.player.dispatcher;
+			dispatcher.resume()
+		}
+}
