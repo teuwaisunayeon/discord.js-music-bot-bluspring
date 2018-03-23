@@ -13,11 +13,10 @@ Please join my bot's Discord server here for assistance with the module: [FoozBa
 # How to use
 First off, `cd` into the bot folder (after downloading it) and type `npm i`. This will install all the required modules.
 Rename the `d_config.json` file to `config.json`.
-Also, please install FFMPEG. Instructions [here](https://github.com/adaptlearning/adapt_authoring/wiki/Installing-FFmpeg)
+Also, please install FFMPEG. Instructions [here](https://github.com/adaptlearning/adapt_authoring/wiki/Installing-FFmpeg).
 And also, install either node-opus or opusscript.
 `npm i -s node-opus` OR `npm i -s opusscript`
-
-
+How to use eval? Edit the code file, look for "admins" and replace the array of user IDs with yours and your trustable friends!
 
 # Configurations
 
