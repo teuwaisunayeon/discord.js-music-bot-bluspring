@@ -266,7 +266,7 @@ client.on('message', async message => {
 					creator: info.author.name,
 					requester: message.author.tag,
 					thumbnail: info.thumbnail_url,
-					creator_url: info.author.channel_url
+					creator_url: info.channel_url
 				})
 					const embed = new Discord.RichEmbed()
 		.setColor([0, 255, 0])
@@ -287,12 +287,12 @@ client.on('message', async message => {
 					title: info.title,
 					creator: info.author.name,
 					requester: message.author.tag,
-					thumbnail: info.thumbnail_url,
+					thumbnail: result.thumbnails.high.url,
 					creator_url: info.author.channel_url
 				})
 				const embed = new Discord.RichEmbed()
 		.setColor([0, 255, 0])
-		.setThumbnail(info.thumbnail_url)
+		.setThumbnail(result.thumbnails.high.url)
 		.addField(`Added to queue:`, `[${info.title}](${args[0]}) by [${info.author.name}](${info.author.channel_url})`)
 		.setFooter(`Requested by ${message.author.tag}!`)
 		message.channel.send(embed)

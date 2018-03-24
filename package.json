@@ -1,6 +1,6 @@
 {
   "name": "music-bot-testing",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "To test music (myself)",
   "main": "MusicTest.js",
   "scripts": {
