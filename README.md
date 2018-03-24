@@ -1,5 +1,5 @@
 # Music Test Bot
-  A standalone Discord.JS music bot based on [DarkoPendragon](https://github.com/DarkoPendragon]'s [discord.js-musicbot-addon](https://github.com/DarkoPendragon/discord.js-musicbot-addon) module.
+  A standalone Discord.JS music bot based on [DarkoPendragon](https://github.com/DarkoPendragon)'s [discord.js-musicbot-addon](https://github.com/DarkoPendragon/discord.js-musicbot-addon) module.
  Some parts of this code is taken from his module (v1.5.1 and v1.10.3)<br>
 Developers: Naz // BluSpring, Damo // CodaEnder<br>
 You are allowed to take any piece of code from here into your own music bot :)<br>
