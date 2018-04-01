@@ -1,7 +1,7 @@
 {
-  "name": "music-bot-testing",
-  "version": "0.2.1",
-  "description": "To test music (myself)",
+  "name": "discord.js-music-bot-bluspring",
+  "version": "0.3.0",
+  "description": "A Discord.js music module based on discord.js-musicbot-addon by DarkoPendragon",
   "main": "MusicTest.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
