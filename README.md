@@ -14,7 +14,6 @@ Please join my bot's Discord server here for assistance with the module: [FoozBa
 
 | Option | Type | Required? | Description | Default
 | --- | --- | --- | --- | --- |
-| token | String | yes | Required for the bot to log in. Get a token from [here](https://twentysix26.github.io/Red-Docs/red_guide_bot_accounts/#creating-a-new-bot-account) | None |
 | ytkey | String | yes | Required to search for YT videos. How to get one is [here](https://developers.google.com/youtube/v3/getting-started) | None |
 | prefix | String | no | Shows what you want your bot to respond to. | ! |
 | helpCmd | String | no | What should the help command be. | help |
@@ -46,7 +45,6 @@ const Discord = require('discord.js')
 const bot = new Discord.Client()
 const Music = require('discord.js-music-bot-bluspring')
 const music = new Music(bot, {
-	token: "token",
 	ytkey: "youtube-api-key",
 	prefix: "!",
   	helpCmd: "gitsomehelp",
