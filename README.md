@@ -9,6 +9,8 @@ This is open-source code, anyway.<br>
 I left some notes for help.<br>
 <br><br>
 Please join my bot's Discord server here for assistance with the module: [FoozBallKing Bot Official](https://discord.gg/CYVBkej)
+<br>
+Installation: `npm i -s discord.js-music-bot-bluspring`
 
 # Configurations
 
