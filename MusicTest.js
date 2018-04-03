@@ -1,5 +1,5 @@
 /*
-	A standalone Discord.JS music bot based on DarkoPendragon's discord.js-musicbot-addon module.
+	A Discord.js music module based on discord.js-musicbot-addon by DarkoPendragon
 	Some parts of this code is taken from his module (v1.5.1 and v1.10.3)
 	Developers: Naz // BluSpring, Damo // CodaEnder
 
@@ -12,35 +12,31 @@
 	Please join my bot's Discord server here for assistance with the module: https://discord.gg/CYVBkej
 */
 
-const Discord = require('discord.js');
-const client = new Discord.Client();
-const config = require('./config.json'); // Change "config.json" to "d_config.json"
-// const stream = require('youtube-audio-stream') // Broken, will use when it works again
+const Discord = require('discord.js')
 const ytdl = require('ytdl-core');
-const fs = require('fs'); // For the Download Vid.
-const { YTSearcher } = require('ytsearcher'); // Search on YT
-const playlist = require('youtube-playlist-info');
-// Scripts
+const { YTSearcher } = require('ytsearcher');
+const ypi = require('youtube-playlist-info');
+/**
+	* @param {Client} client - Discord Client
+	* @param {object} options - Options
+*/
 
-// Config setup
-const prefix = config.prefix || '!'; // If you defined your prefix, use that prefix, else use already-set prefix.
-const ytkey = config.ytapi3; // REQUIRED!
-const helpCmd = config.helpCmd || 'help';
-const playCmd = config.playCmd || 'play';
-const pauseCmd = config.pauseCmd || 'pause';
-const stopCmd = config.stopCmd || 'stop';
-const queueCmd = config.queueCmd || 'queue';
-const npCmd = config.npCmd || 'np';
-const skipCmd = config.skipCmd || 'skip';
-const resumeCmd = config.resumeCmd || 'resume';
-const downloadVid = config.downloadVid || false;
-let queuesL = {}
-const admins = ["249467130108575745", "379274926621720576"] // Admin array, for eval.
+function music(client, options) {
+	const prefix = (options && options.prefix) || '!'; // If you defined your prefix, use that prefix, else use already-set prefix.
+const ytkey = (options && options.ytkey); // REQUIRED!
+const helpCmd = (options && options.helpCmd) || 'help';
+const playCmd = (options && options.playCmd) || 'play';
+const pauseCmd = (options && options.pauseCmd) || 'pause';
+const stopCmd = (options && options.stopCmd) || 'stop';
+const queueCmd = (options && options.queueCmd) || 'queue';
+const npCmd = (options && options.npCmd) || 'np';
+const skipCmd = (options && options.skipCmd) || 'skip';
+const resumeCmd = (options && options.resumeCmd) || 'resume';
+const downloadVid = (options && options.downloadVid) || false;
+const leaveCmd = (options && options.leaveCmd) || 'leave';
+let queuesL = {};
+const admins = []; // Admin array, for eval.
 
-const searcher = new YTSearcher({ // For searching.
-	key: ytkey,
-	revealkey: true
-})
 
 // Important config detection
 if(typeof prefix !== 'string') {
@@ -54,21 +50,17 @@ if(typeof prefix !== 'string') {
 	process.exit(1)
 }
 
-if(!config) {
-	console.error(new Error('Config is not defined, look in source code.'))
-	process.exit(1)
-}
 
-if(typeof ytkey !== 'string') {
-	console.error(new TypeError('YT API v3 key must be a string!'))
-	process.exit(1)
-} else if(!ytkey) {
-	console.error(new TypeError('No YT API v3 key!'))
-	process.exit(1)
-} else if(!ytkey.includes('-')) {
-	console.error(new TypeError('YT API v3 key seems invalid!'))
-	process.exit(1)
-}
+	if(typeof ytkey !== 'string') {
+		console.error(new TypeError('YT API v3 key must be a string!'))
+		process.exit(1)
+	} else if(!ytkey) {
+		console.error(new TypeError('No YT API v3 key!'))
+		process.exit(1)
+	} else if(!ytkey.includes('-')) {
+		console.error(new TypeError('YT API v3 key seems invalid!'))
+		process.exit(1)
+	}
 
 if(typeof helpCmd !== 'string') {
 	console.error(new TypeError('Help command must be a string!'))
@@ -116,63 +108,12 @@ if (process.version.slice(1).split('.')[0] < 8) { // NodeJS version check, depri
     console.error(new Error(`NodeJS v8 or higher is needed, please update for everything to work!`));
     process.exit(1);
   };
-/*
-	Music Test Bot created by Naz // Blu - Developer of FoozBallKing Bot
-	Inspired by DarkoPendragon's discord.js-musicbot-addon module
-*/
 
-client.on('message', async message => {
-	const msg = message.content.trim()
-	const args = message.content.split(' ').slice(1)
-	if(msg.toLowerCase().startsWith(prefix + helpCmd)) return help(message)
-	if(msg.toLowerCase().startsWith(prefix + playCmd)) return play(message, args)
-	if(msg.toLowerCase().startsWith(prefix + 'leave')) return leave(message)
-	if(msg.toLowerCase().startsWith(prefix + queueCmd)) return queue(message)
-	if(msg.toLowerCase().startsWith(prefix + npCmd)) return np(message)
-	if(msg.toLowerCase().startsWith(prefix + skipCmd)) return skip(message, args)
-	if(msg.toLowerCase().startsWith(prefix + pauseCmd)) return pause(message)
-	if(msg.toLowerCase().startsWith(prefix + stopCmd)) return stop(message)
-	if(msg.toLowerCase().startsWith(prefix + resumeCmd)) return resume(message)
-		
-	if(msg.toLowerCase().startsWith(prefix + 'eval')) {
-		if(admins.some(ad => message.author.id.includes(ad))) {
-			try {
-			const code = args.join(" ")
-			let evaled = eval(code);
-			
-			if (typeof evaled !== "string")
-			evaled = require("util").inspect(evaled);
-
-			message.channel.send(clean(evaled), {code:"xl"});
-		} catch (err) {
-      message.channel.send(`\`ERROR\` \`\`\`xl\n${clean(err)}\n\`\`\``);
-    }
-		} else {
-			message.channel.send('No permission to use this command.')
-		}
-	}
-	
-	if(msg.toLowerCase().startsWith(prefix + 'custom')) return customFunction(message, args) // Make a custom command here :)
-
+const searcher = new YTSearcher({ // For searching.
+	key: ytkey,
+	revealkey: true
 })
-	.on('ready', async () => {
-		const musicz = ['Best Friend', 'Demons', 'My Demons', 'Sad Song', 'YouTube Music'] // You can change this array :)
-		const result = Math.floor((Math.random() * musicz.length) + 0) // Chooses randomly from the array
-		client.user.setActivity(`${musicz[result]}! | ${prefix}help`, { type: 'LISTENING' }) // Then sets its game/activity
-		console.log(`${client.user.username} music set up! | Logged in as ${client.user.tag}`)
-		if(!config.prefix)
-			return console.log('No prefix set! Defaulting to "!".')
-		else if(config.prefix == '!')
-			return console.log('Nice one, you\'re using the set prefix "!" as your config\'s prefix.')
-		else
-			return console.log(`Prefix set to "${prefix}"!`)
-	})
-	.on('guildAdd', async guild => { // If there's a new guild added, it will change game/activity
-		const musicz = ['Best Friend', 'Demons', 'My Demons', 'Sad Song', 'YouTube Music']
-		const result = Math.floor((Math.random() * musicz.length) + 0)
-		client.user.setActivity(`${musicz[result]}! | ${prefix}help`, { type: 'LISTENING' })
-	})
-	.login(config.token)
+
 	function getQueueLink(server) { // Grabbed from DarkoPendragon's Music module (v1.5.1), edited to fit a queue link.
 		if (!queuesL[server]) queuesL[server] = [];
 		return queuesL[server];
@@ -252,7 +193,7 @@ client.on('message', async message => {
 		}
 	}
 	
-	async function play(message, args) { // Play function
+	function play(message, args) { // Play function
 		if(!args) return message.channel.send('No arguments defined!')
 		const httpTypes = ['http://', 'https://']
 			if(httpTypes.some(ht => args[0].includes(ht))) {
@@ -336,11 +277,6 @@ client.on('message', async message => {
 		.addField(`Now playing:`, `[${queul[0].title}](${queul[0].url}) by [${queul[0].creator}](${queul[0].creator_url})`)
 		.setFooter(`Requested by ${queul[0].requester}!`)
 		message.channel.send(embed)
-		if(downloadVid == true) {
-		ytdl.getInfo(queul[0].url, (error, info) => {
-		ytdl(queul[0].url).pipe(fs.createWriteStream(`./audio_temp/${message.guild.id}-${info.video_id}.webm`));
-	})
-	}
 		let dispatcher = connection.playStream(ytdl(queul[0].url, {filter: 'audioonly'}))
 		connection.on('error', error => {
 			message.channel.send(`Dispatcher or connection error occured: ${error}`)
@@ -369,6 +305,7 @@ client.on('message', async message => {
 	
 	function leave(message) { // Leave the VC.
 		const voiceCon = client.voiceConnections.find(meh => meh.channel.guild.id == message.guild.id);
+		if(!message.guild.members.get(message.author.id).roles.find('name', 'DJ')) return message.channel.send('You don\'t have the DJ role!')
 		if(voiceCon == null) {
 			message.channel.send('I\'m already out of a voice channel!')
 		} else {
@@ -389,12 +326,6 @@ client.on('message', async message => {
 			message.channel.send('Queue:\n' + text)
 	}
 	
-	function clean(text) { // For Eval
-	if (typeof(text) === "string")
-	  return text.replace(/`/g, "`" + String.fromCharCode(8203)).replace(/@/g, "@" + String.fromCharCode(8203));
-	else
-		return text;
-}
 
 function np(message) { // Now playing.
 	const voiceConnection = client.voiceConnections.find(meh => meh.channel.guild.id == message.guild.id);
@@ -408,18 +339,11 @@ function np(message) { // Now playing.
 		message.channel.send(embed)
 }
 
-function customFunction(message, args) { // Custom command
-	message.channel.send(`Create a message here :P (Custom Function)`)
-}
-
-process.on('unhandledRejection', (reason, p) => { // Thanks to Damien // CodaEnder for this :P, catches an unhandled rejection error.
-  console.log('Unhandled Rejection at: ', p, ', reason:', reason);
-});
-
 function skip(message, args) {
 	const voiceConnection = client.voiceConnections.find(meh => meh.channel.guild.id == message.guild.id);
 	if (voiceConnection == null) return message.channel.send('Not playing music!')
 	const queul = getQueueLink(message.guild.id)
+	if(!message.guild.members.get(message.author.id).roles.find('name', 'DJ')) return message.channel.send('You don\'t have the DJ role!')
 	let sum = 1
 	if(!isNaN(args) && parseInt(args.join(" ")) > 0) {
 		sum = parseInt(args.join(" "))
@@ -437,6 +361,7 @@ function skip(message, args) {
 function stop(message) {
 	const voiceConnection = client.voiceConnections.find(meh => meh.channel.guild.id == message.guild.id);
 	if (voiceConnection == null) return message.channel.send('Not playing music!')
+		if(!message.guild.members.get(message.author.id).roles.find('name', 'DJ')) return message.channel.send('You don\'t have the DJ role!')
 		const queul = getQueueLink(message.guild.id)
 	queul.splice(0, queul.length)
 		const dispatcher = voiceConnection.player.dispatcher;
@@ -447,6 +372,7 @@ function stop(message) {
 function pause(message) {
 	const voiceConnection = client.voiceConnections.find(meh => meh.channel.guild.id == message.guild.id);
 	if (voiceConnection == null) return message.channel.send('Not playing music!')
+		if(!message.guild.members.get(message.author.id).roles.find('name', 'DJ')) return message.channel.send('You don\'t have the DJ role!')
 		const dispatcher = voiceConnection.player.dispatcher;
 	if(voiceConnection.paused) {
 		message.channel.send('Already paused!')
@@ -458,6 +384,7 @@ function pause(message) {
 function resume(message) {
 	const voiceConnection = client.voiceConnections.find(meh => meh.channel.guild.id == message.guild.id);
 	if (voiceConnection == null) return message.channel.send('Not playing music!')
+		if(!message.guild.members.get(message.author.id).roles.find('name', 'DJ')) return message.channel.send('You don\'t have the DJ role!')
 		if(!voiceConnection.paused) {
 			message.channel.send('Already playing!')
 		} else {
@@ -465,3 +392,32 @@ function resume(message) {
 			dispatcher.resume()
 		}
 }
+process.on('unhandledRejection', (reason, p) => { // Thanks to Damien // CodaEnder for this :P, catches an unhandled rejection error.
+  console.log('Unhandled Rejection at: ', p, ', reason:', reason);
+});
+
+client.on('message', message => {
+	const m = message.content.toLowerCase()
+	if(m.startsWith(prefix + playCmd)) 
+    return play(message)
+  else if(m.startsWith(prefix + helpCmd))
+    return help(message)
+  else if(m.startsWith(prefix + leaveCmd))
+    return leave(message)
+  else if(m.startsWith(prefix + queueCmd))
+    return queue(message)
+  else if(m.startsWith(prefix + npCmd))
+    return np(message)
+  else if(m.startsWith(prefix + skipCmd))
+    return skip(message)
+  else if(m.startsWith(prefix + stopCmd))
+    return stop(message)
+  else if(m.startsWith(prefix + pauseCmd))
+    return pause(message)
+  else if(m.startsWith(prefix + resumeCmd))
+    return resume(message)
+})
+
+}
+
+module.exports = music
