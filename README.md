@@ -32,8 +32,9 @@ How to use eval? Edit the code file, look for "admins" and replace the array of 
 | queueCmd | String | no | What should the queue command be. | queue |
 | npCmd | String | no | What should the Now Playing command be. | np |
 | skipCmd | String | no | What should the skip command be. | skip |
-| resumeCmd | String | no | What should the resume command be. | resume|
+| resumeCmd | String | no | What should the resume command be. | resume |
 | downloadVid | Boolean | no | If you want to download the video. Make sure the `audio_temp` folder is there. | false |
+| loopCmd | String | no | What should the loop command be. | loop |
 
 Also, make sure the commands are done in lowercase, since the code already makes the commands go from uppercase to lowercase.<br>
 Basic configuration:
@@ -58,7 +59,8 @@ Advanced configuration:
 	"npCmd": "whatsplaying",
 	"downloadVid": true,
 	"resumeCmd": "continue",
-	"skipCmd": "switch"
+	"skipCmd": "switch",
+	"loopCmd": "repeat"
 }
 ```
 
