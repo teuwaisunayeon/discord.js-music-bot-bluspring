@@ -356,7 +356,7 @@ client.on('message', async message => {
 		
 		dispatcher.on('end', () => {
 			setTimeout(() => {
-				if(queul.length > 0) {
+				if(queul.length > 1) {
 					queul.shift()
 					execQueueLink(message, queul)
 				} else {
