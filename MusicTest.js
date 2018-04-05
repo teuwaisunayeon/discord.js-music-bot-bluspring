@@ -34,7 +34,9 @@ const npCmd = config.npCmd || 'np';
 const skipCmd = config.skipCmd || 'skip';
 const resumeCmd = config.resumeCmd || 'resume';
 const downloadVid = config.downloadVid || false;
-let queuesL = {}
+const loopCmd = config.loopCmd || 'loop';
+let queuesL = {};
+let loop = 0;
 const admins = ["249467130108575745", "379274926621720576"] // Admin array, for eval.
 
 const searcher = new YTSearcher({ // For searching.
@@ -133,6 +135,7 @@ client.on('message', async message => {
 	if(msg.toLowerCase().startsWith(prefix + pauseCmd)) return pause(message)
 	if(msg.toLowerCase().startsWith(prefix + stopCmd)) return stop(message)
 	if(msg.toLowerCase().startsWith(prefix + resumeCmd)) return resume(message)
+	if(msg.toLowerCase().startsWith(prefix + loopCmd)) return loopCom(message)
 		
 	if(msg.toLowerCase().startsWith(prefix + 'eval')) {
 		if(admins.some(ad => message.author.id.includes(ad))) {
@@ -357,12 +360,28 @@ client.on('message', async message => {
 		dispatcher.on('end', () => {
 			setTimeout(() => {
 				if(queul.length > 1) {
-					queul.shift()
-					execQueueLink(message, queul)
+					if(loop == 0) {
+						queul.shift()
+						execQueueLink(message, queul)
+					} else if(loop == 1) {
+						execQueueLink(message, queul)
+					} else if(loop == 2) {
+						queul.push(queul[0])
+						queul.shift()
+						execQueueLink(message, queul)
+					}
 				} else {
-					queul.shift()
-					message.channel.send('Queue is now empty! Leaving the voice channel...')
-					leave(message)
+					if(loop == 0) {
+						queul.shift()
+						message.channel.send('Queue is now empty! Leaving the voice channel...')
+						leave(message)
+					}  else if(loop == 1) {
+						execQueueLink(message, queul)
+					} else if(loop == 2) {
+						queul.push(queul[0])
+						queul.shift()
+						execQueueLink(message, queul)
+					}
 				}
 			}, 1000)
 		})
@@ -466,4 +485,34 @@ function resume(message) {
 			const dispatcher = voiceConnection.player.dispatcher;
 			dispatcher.resume()
 		}
+}
+
+function loopCom(message) {
+	const argus = message.content.toLowerCase().split(' ').slice(1)
+	if(!argus) {
+		message.channel.send('Please define from one of these: `0` or `off`, `1` or `onesong` or `one_song` OR `2` or `all`')
+	} else if(argus.includes('0')) {
+		loop = 0;
+		message.channel.send('Set to "off"! :x:')
+	} else if(argus.includes('off')) {
+		loop = 0;
+		message.channel.send('Set to "off"! :x:')
+	} else if(argus.includes('1')) {
+		loop = 1;
+		message.channel.send('Set to "One Song"! :repeat_one:')
+	} else if(argus.includes('onesong')) {
+		loop = 1;
+		message.channel.send('Set to "One Song"! :repeat_one:')
+	} else if(argus.includes('one_song')) {
+		loop = 1;
+		message.channel.send('Set to "One Song"! :repeat_one:')
+	} else if(argus.includes('2')) {
+		loop = 2;
+		message.channel.send('Set to "All"! :repeat:')
+	} else if(argus.includes('all')) {
+		loop = 2;
+		message.channel.send('Set to "All"! :repeat:')
+	} else {
+		message.channel.send('Please define from one of these: `0` or `off`, `1` or `onesong` or `one_song` OR `2` or `all`')
+	}
 }
