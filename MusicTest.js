@@ -268,14 +268,15 @@ client.on('message', async message => {
 					thumbnail: info.thumbnail_url,
 					creator_url: info.channel_url
 				})
+				
 					const embed = new Discord.RichEmbed()
 		.setColor([0, 255, 0])
 		.setThumbnail(info.thumbnail_url)
 		.addField(`Added to queue:`, `[${info.title}](${args[0]}) by [${info.author.name}](${info.author.channel_url})`)
 		.setFooter(`Requested by ${message.author.tag}!`)
 		message.channel.send(embed)
+		if (queul.length === 0 || !client.voiceConnections.find(meh => meh.channel.guild.id == message.guild.id)) execQueueLink(message, queul);
 				})
-				if(queul.length === 0 || !client.voiceConnections.find(meh => meh.channel.guild.id == message.guild.id)) execQueueLink(message)
 			} else {
 				const queul = getQueueLink(message.guild.id)
 				searcher.search(args.join(" "), { type: 'video' }).then(searchResult => {
@@ -296,14 +297,13 @@ client.on('message', async message => {
 		.addField(`Added to queue:`, `[${info.title}](${args[0]}) by [${info.author.name}](${info.author.channel_url})`)
 		.setFooter(`Requested by ${message.author.tag}!`)
 		message.channel.send(embed)
+		if (queul.length === 0 || !client.voiceConnections.find(meh => meh.channel.guild.id == message.guild.id)) execQueueLink(message, queul);
 			})
-          if (queul.length === 0 || !client.voiceConnections.find(meh => meh.channel.guild.id == message.guild.id)) execQueueLink(message);
         });
 			}
 		}
 	
-	function execQueueLink(message) { // Execute the queue
-		const queul = getQueueLink(message.guild.id)
+	function execQueueLink(message, queul) { // Execute the queue
 		if (queul.length < 0) {
 			message.channel.send('Playback finished.');
 			// Leave the voice channel.
@@ -335,7 +335,9 @@ client.on('message', async message => {
 		.setThumbnail(queul[0].thumbnail)
 		.addField(`Now playing:`, `[${queul[0].title}](${queul[0].url}) by [${queul[0].creator}](${queul[0].creator_url})`)
 		.setFooter(`Requested by ${queul[0].requester}!`)
-		message.channel.send(embed)
+		message.channel.send(embed).catch(err => {
+			return message.channel.send(err)
+		})
 		if(downloadVid == true) {
 		ytdl.getInfo(queul[0].url, (error, info) => {
 		ytdl(queul[0].url).pipe(fs.createWriteStream(`./audio_temp/${message.guild.id}-${info.video_id}.webm`));
