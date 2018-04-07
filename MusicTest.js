@@ -293,6 +293,7 @@ client.on('message', async message => {
 				})
 			} else {
 				const queul = getQueueLink(message.guild.id)
+				if(!args) return message.channel.send('No arguments!')
 				searcher.search(args.join(" "), { type: 'video' }).then(searchResult => {
           if (!searchResult.totalResults || searchResult.totalResults === 0) return message.channel.send('Failed to get search results.');
 		  const result = searchResult.first
@@ -310,10 +311,14 @@ client.on('message', async message => {
 		.setThumbnail(result.thumbnails.high.url)
 		.addField(`Added to queue:`, `[${info.title}](${args[0]}) by [${info.author.name}](${info.author.channel_url})`)
 		.setFooter(`Requested by ${message.author.tag}!`)
-		message.channel.send(embed)
+		message.channel.send(embed).catch(err => {
+				return giveErr(err)
+			})
 		if (queul.length === 0 || !client.voiceConnections.find(meh => meh.channel.guild.id == message.guild.id)) execQueueLink(message, queul);
 			})
-        });
+        }).catch(err => {
+				return giveErr(err)
+			})
 			}
 		}
 	
@@ -344,14 +349,16 @@ client.on('message', async message => {
         resolve(voiceConnection);
       }
     }).then(connection => {
+		try {
 		const embed = new Discord.RichEmbed()
 		.setColor([255, 0, 0])
 		.setThumbnail(queul[0].thumbnail)
 		.addField(`Now playing:`, `[${queul[0].title}](${queul[0].url}) by [${queul[0].creator}](${queul[0].creator_url})`)
 		.setFooter(`Requested by ${queul[0].requester}!`)
-		message.channel.send(embed).catch(err => {
-			return message.channel.send(err)
-		})
+		message.channel.send(embed)
+		} catch (err) {
+			return giveErr(err)
+		}
 		if(downloadVid == true) {
 		ytdl.getInfo(queul[0].url, (error, info) => {
 		ytdl(queul[0].url).pipe(fs.createWriteStream(`./audio_temp/${message.guild.id}-${info.video_id}.webm`));
@@ -405,9 +412,10 @@ client.on('message', async message => {
 		if(voiceCon == null) {
 			message.channel.send('I\'m already out of a voice channel!')
 		} else {
-			voiceCon.disconnect()
+			voiceCon.disconnect().catch(err => {
+				return giveErr(err)
+			})
 			message.channel.send('Left voice channel.')
-			message.channel.send('May have rejoined, try that again if so!')
 		}
 	}
 	
@@ -462,8 +470,18 @@ function skip(message, args) {
 	queul.splice(0, sum - 1)
 
 	const dispatcher = voiceConnection.player.dispatcher;
-		if (voiceConnection.paused) dispatcher.resume();
-		dispatcher.end();
+		if(voiceConnection.paused) {
+		try {
+		dispatcher.resume()
+} catch (err) {
+				return giveErr(err)
+			}
+	}
+			try {
+			dispatcher.end()
+			} catch(err) {
+				return giveErr(err)
+			}
 	message.channel.send(`Skipped ${sum} songs!`)
 }
 
@@ -473,29 +491,47 @@ function stop(message) {
 		const queul = getQueueLink(message.guild.id)
 	queul.splice(0, queul.length)
 		const dispatcher = voiceConnection.player.dispatcher;
-	if(voiceConnection.paused) dispatcher.resume()
-		dispatcher.end()
+	if(voiceConnection.paused) {
+		try {
+		dispatcher.resume()
+} catch (err) {
+				return giveErr(err)
+			}
+	}
+			try {
+			dispatcher.end()
+			} catch(err) {
+				return giveErr(err)
+			}
 }
 
 function pause(message) {
 	const voiceConnection = client.voiceConnections.find(meh => meh.channel.guild.id == message.guild.id);
 	if (voiceConnection == null) return message.channel.send('Not playing music!')
 		const dispatcher = voiceConnection.player.dispatcher;
-	if(voiceConnection.paused) {
+	if(dispatcher.paused == true) {
 		message.channel.send('Already paused!')
 	} else {
+		try {
 		dispatcher.pause()
+		} catch(err) {
+				return giveErr(err)
+			}
 	}
 }
 
 function resume(message) {
 	const voiceConnection = client.voiceConnections.find(meh => meh.channel.guild.id == message.guild.id);
 	if (voiceConnection == null) return message.channel.send('Not playing music!')
-		if(!voiceConnection.paused) {
+		const dispatcher = voiceConnection.player.dispatcher;
+		if(dispatcher.paused == false) {
 			message.channel.send('Already playing!')
 		} else {
-			const dispatcher = voiceConnection.player.dispatcher;
+			try {
 			dispatcher.resume()
+			} catch (err) {
+				return giveErr(err)
+			}
 		}
 }
 
@@ -527,5 +563,38 @@ function loopCom(message) {
 		message.channel.send('Set to "All"! :repeat:')
 	} else {
 		message.channel.send('Please define from one of these: `0` or `off`, `1` or `onesong` or `one_song` OR `2` or `all`')
+	}
+}
+
+function giveErr(err) {
+	let datErrTho = err.slice(1)
+	let giveTheErrPls = new Discord.RichEmbed()
+	.setColor([179, 0, 0])
+	.setTitle(`Error while executing this command!`)
+	.setThumbnail(client.user.avatarURL)
+	.addField(`Type of error: giveTypeOfErr(err)`, '`' + datErrTho + '`')
+	.setFooter(`For more information or info on how to fix this,  go to https://discord.gg/RfmJYQX`)
+	return giveTheErrPls
+}
+
+function giveTypeOfErr(err) {
+	if(err.startsWith('TypeError')) {
+		return 'Type'
+	} else if(err.startsWith('Error')) {
+		return 'Regular'
+	} else if(err.startsWith('AssertionError')) {
+		return 'Assertion'
+	} else if(err.startsWith('EvalError')) {
+		return 'Evaluation'
+	} else if(err.startsWith('RangeError')) {
+		return 'Range'
+	} else if(err.startsWith('SyntaxError')) {
+		return 'Syntax'
+	} else if(err.startsWith('ReferenceError')) {
+		return 'Undefined Reference'
+	} else if(err.startsWith('URIError')) {
+		return 'URI'
+	} else {
+		return 'Unknown'
 	}
 }
