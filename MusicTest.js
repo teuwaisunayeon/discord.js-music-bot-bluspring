@@ -14,6 +14,7 @@
 
 const Discord = require('discord.js');
 const client = new Discord.Client();
+const bot = client;
 const config = require('./config.json'); // Change "config.json" to "d_config.json"
 // const stream = require('youtube-audio-stream') // Broken, will use when it works again
 const ytdl = require('ytdl-core');
@@ -155,7 +156,7 @@ client.on('message', async message => {
 		}
 	}
 	
-	if(msg.toLowerCase().startsWith(prefix + 'custom')) return customFunction(message, args) // Make a custom command here :)
+	
 
 })
 	.on('ready', async () => {
@@ -186,10 +187,11 @@ client.on('message', async message => {
 		loop[server] = {
 			type: 0
 		}
-		}
+    }
 			if(type) return loop[server] = {
 				type: type
-			}
+      }
+      return loop[server];
 	}
 	
 	function help(message) { // Change help
@@ -377,7 +379,8 @@ client.on('message', async message => {
 		
 		dispatcher.on('end', () => {
 			setTimeout(() => {
-				const curLoop = loop[message.guild.id].type
+				let datLoopTho = grabLoop(message.guild.id)
+				let curLoop = datLoopTho.type
 				if(queul.length > 1) {
 					if(curLoop == 0) {
 						queul.shift()
@@ -567,12 +570,12 @@ function loopCom(message) {
 }
 
 function giveErr(err) {
-	let datErrTho = err.slice(1)
+	let datErrTho = err
 	let giveTheErrPls = new Discord.RichEmbed()
 	.setColor([179, 0, 0])
 	.setTitle(`Error while executing this command!`)
 	.setThumbnail(client.user.avatarURL)
-	.addField(`Type of error: giveTypeOfErr(err)`, '`' + datErrTho + '`')
+	.addField(`Type of error: ${giveTypeOfErr(err)}`, '`' + datErrTho + '`')
 	.setFooter(`For more information or info on how to fix this,  go to https://discord.gg/RfmJYQX`)
 	return giveTheErrPls
 }
