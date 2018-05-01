@@ -1,7 +1,7 @@
 {
   "name": "discord.js-music-bot-bluspring",
-  "version": "0.3.3",
-  "description": "A Discord.js music module based on discord.js-musicbot-addon by DarkoPendragon",
+  "version": "0.4.0",
+  "description": "To test music (myself)",
   "main": "MusicTest.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -17,19 +17,5 @@
     "youtube-playlist-info": "^1.1.2",
     "ytdl-core": "^0.20.2",
     "ytsearcher": "^1.0.3"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/BluSpring/discord.js-music-bot-bluspring.git"
-  },
-  "keywords": [
-    "musicbot",
-    "discord.js",
-    "music",
-    "bot"
-  ],
-  "bugs": {
-    "url": "https://github.com/BluSpring/discord.js-music-bot-bluspring/issues"
-  },
-  "homepage": "https://github.com/BluSpring/discord.js-music-bot-bluspring#readme"
+  }
 }
