@@ -1,5 +1,5 @@
-# discord.js-music-bot-bluspring
-  A discord.js Music bot module [DarkoPendragon](https://github.com/DarkoPendragon)'s [discord.js-musicbot-addon](https://github.com/DarkoPendragon/discord.js-musicbot-addon) module.
+# Music Test Bot
+  A standalone Discord.JS music bot based on [DarkoPendragon](https://github.com/DarkoPendragon)'s [discord.js-musicbot-addon](https://github.com/DarkoPendragon/discord.js-musicbot-addon) module.
  Some parts of this code is taken from his module (v1.5.1 and v1.10.3)<br>
 Developers: Naz // BluSpring, Damo // CodaEnder<br>
 You are allowed to take any piece of code from here into your own music bot :)<br>
@@ -9,14 +9,20 @@ This is open-source code, anyway.<br>
 I left some notes for help.<br>
 <br><br>
 Please join my bot's Discord server here for assistance with the module: [FoozBallKing Bot Official](https://discord.gg/CYVBkej)
-<br>
-Installation: `npm i -s discord.js-music-bot-bluspring`
+
+# How to use
+First off, `cd` into the bot folder (after downloading it) and type `npm i`. This will install all the required modules.<br>
+Rename the `d_config.json` file to `config.json`.<br>
+Also, please install FFMPEG. Instructions [here](https://github.com/adaptlearning/adapt_authoring/wiki/Installing-FFmpeg).<br>
+And also, install either node-opus or opusscript.<br>
+`npm i -s node-opus` OR `npm i -s opusscript`<br>
+How to use eval? Edit the code file, look for "admins" and replace the array of user IDs with yours and your trustable friends!<br>
 
 # Configurations
 
 | Option | Type | Required? | Description | Default
 | --- | --- | --- | --- | --- |
-| ytkey | String | yes | Required to search for YT videos. How to get one is [here](https://developers.google.com/youtube/v3/getting-started) | None |
+| ytapi3 | String | yes | Required to search for YT videos. How to get one is [here](https://developers.google.com/youtube/v3/getting-started) | None |
 | prefix | String | no | Shows what you want your bot to respond to. | ! |
 | helpCmd | String | no | What should the help command be. | help |
 | playCmd | String | no | What should the play command be. | play |
@@ -26,31 +32,31 @@ Installation: `npm i -s discord.js-music-bot-bluspring`
 | npCmd | String | no | What should the Now Playing command be. | np |
 | skipCmd | String | no | What should the skip command be. | skip |
 | resumeCmd | String | no | What should the resume command be. | resume |
-| leaveCmd | String | no | What should the leave command be. | leave |
 | downloadVid | Boolean | no | If you want to download the video. Make sure the `audio_temp` folder is there. | false |
+| loopCmd | String | no | What should the loop command be. | loop |
+| randomGame | Boolean | no | If you want the bot to be able to do a random game every time it boots up. | false |
 
 Also, make sure the commands are done in lowercase, since the code already makes the commands go from uppercase to lowercase.<br>
 Basic configuration:
 ```javascript
+const music = require('discord.js-music-bot-bluspring')
 const Discord = require('discord.js')
 const bot = new Discord.Client()
-const Music = require('discord.js-music-bot-bluspring')
-const music = new Music(bot, {
-	ytkey: 'YouTube Data API key v3',
-	prefix: '!'
+const Music = new music(bot, {
+	ytapi3": "youtube-api-key"
 })
 ```
 
 Advanced configuration:
 ```javascript
+const music = require('discord.js-music-bot-bluspring')
 const Discord = require('discord.js')
 const bot = new Discord.Client()
-const Music = require('discord.js-music-bot-bluspring')
-const music = new Music(bot, {
-	ytkey: "youtube-api-key",
+const Music = new music(bot, {
+	ytapi3: "youtube-api-key",
 	prefix: "!",
   	helpCmd: "gitsomehelp",
-  	playCmd: "add",
+	playCmd: "add",
 	pauseCmd: "stopfornow",
 	stopCmd: "stahp",
 	queueCmd: "gimmedaqueue",
@@ -58,7 +64,8 @@ const music = new Music(bot, {
 	downloadVid: true,
 	resumeCmd: "continue",
 	skipCmd: "switch",
-	leaveCmd: "getout"
+	loopCmd": "repeat",
+	randomGame: true
 })
 ```
 
