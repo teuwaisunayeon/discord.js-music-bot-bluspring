@@ -1,3 +1,5 @@
+# Notice
+This module is now deprecated and will only be updated when I feel like it. Please move to my new music module, [discord.js-lavalink-musicbot](https://github.com/BluSpring/discord.js-lavalink-musicbot).
 # Music Test Bot
   A standalone Discord.JS music bot based on [DarkoPendragon](https://github.com/DarkoPendragon)'s [discord.js-musicbot-addon](https://github.com/DarkoPendragon/discord.js-musicbot-addon) module.
  Some parts of this code is taken from his module (v1.5.1 and v1.10.3)<br>
